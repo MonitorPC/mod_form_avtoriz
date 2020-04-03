@@ -149,8 +149,7 @@ def edit_jobs(id):
     form = JobsForm()
     if request.method == "GET":
         session = db_session.create_session()
-        jobs = session.query(Jobs).filter(Jobs.id == id,
-                                          Jobs.user == current_user).first()
+        jobs = session.query(Jobs).filter(Jobs.id == id).first()
         if jobs:
             form.team_leader.data = jobs.team_leader
             form.job.data = jobs.job
@@ -161,8 +160,7 @@ def edit_jobs(id):
             abort(404)
     if form.validate_on_submit():
         session = db_session.create_session()
-        jobs = session.query(Jobs).filter(Jobs.id == id,
-                                          Jobs.user == current_user).first()
+        jobs = session.query(Jobs).filter(Jobs.id == id).first()
         if jobs:
             jobs.team_leader = form.team_leader.data
             jobs.job = form.job.data
