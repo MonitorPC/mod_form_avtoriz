@@ -120,6 +120,7 @@ def logout():
     logout_user()
     return redirect("/")
 
+
 @app.route('/jobs', methods=['GET', 'POST'])
 @login_required
 def add_jobs():
@@ -180,8 +181,7 @@ def edit_jobs(id):
 @login_required
 def jobs_delete(id):
     session = db_session.create_session()
-    jobs = session.query(Jobs).filter(Jobs.id == id,
-                                      Jobs.user == current_user).first()
+    jobs = session.query(Jobs).filter(Jobs.id == id).first()
     if jobs:
         session.delete(jobs)
         session.commit()

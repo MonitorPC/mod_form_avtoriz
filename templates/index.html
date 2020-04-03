@@ -7,7 +7,7 @@
 <h1 align="center">Work logs</h1>
 {% for item in jobs%}
 <div class="col-md6 border rounded">
-    {% if current_user.is_authenticated and current_user == item.user %}
+    {% if current_user.is_authenticated and (current_user == item.user or current_user.id == 1) %}
     <div>
         <a href="/jobs/{{ item.id }}" class="btn btn-warning">Editing</a>
         <a href="/jobs_delete/{{ item.id }}" class="btn btn-danger">Delete</a>
