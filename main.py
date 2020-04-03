@@ -1,5 +1,7 @@
-from flask import Flask, render_template
-from flask_login import LoginManager, login_user
+from os import abort
+
+from flask import Flask, render_template, request
+from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 
 from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
@@ -36,6 +38,15 @@ class LoginForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()])
     remember_me = BooleanField('Запомнить меня')
     submit = SubmitField('Войти')
+
+
+class JobsForm(FlaskForm):
+    team_leader = StringField('Team leader', validators=[DataRequired()])
+    job = TextAreaField("Job", validators=[DataRequired()])
+    work_size = StringField("Work size", validators=[DataRequired()])
+    collaborators = StringField("Collaborators", validators=[DataRequired()])
+    is_finished = BooleanField("Is finished")
+    submit = SubmitField('Применить')
 
 
 def main():
@@ -101,6 +112,82 @@ def login():
                                message="Неправильный логин или пароль",
                                form=form)
     return render_template('login.html', title='Авторизация', form=form)
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
+
+@app.route('/jobs', methods=['GET', 'POST'])
+@login_required
+def add_jobs():
+    form = JobsForm()
+    if form.validate_on_submit():
+        session = db_session.create_session()
+
+        jobs = Jobs()
+        jobs.team_leader = form.team_leader.data
+        jobs.job = form.job.data
+        jobs.work_size = form.work_size.data
+        jobs.collaborators = form.collaborators.data
+        jobs.is_finished = form.is_finished.data
+
+        current_user.jobs.append(jobs)
+        session.merge(current_user)
+        session.commit()
+        return redirect('/')
+    return render_template('jobs.html', title='Adding job',
+                           form=form)
+
+
+@app.route('/jobs/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_jobs(id):
+    form = JobsForm()
+    if request.method == "GET":
+        session = db_session.create_session()
+        jobs = session.query(Jobs).filter(Jobs.id == id,
+                                          Jobs.user == current_user).first()
+        if jobs:
+            form.team_leader.data = jobs.team_leader
+            form.job.data = jobs.job
+            form.work_size.data = jobs.work_size
+            form.collaborators.data = jobs.collaborators
+            form.is_finished.data = jobs.is_finished
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        session = db_session.create_session()
+        jobs = session.query(Jobs).filter(Jobs.id == id,
+                                          Jobs.user == current_user).first()
+        if jobs:
+            jobs.team_leader = form.team_leader.data
+            jobs.job = form.job.data
+            jobs.work_size = form.work_size.data
+            jobs.collaborators = form.collaborators.data
+            jobs.is_finished = form.is_finished.data
+
+            session.commit()
+            return redirect('/')
+        else:
+            abort(404)
+    return render_template('jobs.html', title='Editing job', form=form)
+
+
+@app.route('/jobs_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def jobs_delete(id):
+    session = db_session.create_session()
+    jobs = session.query(Jobs).filter(Jobs.id == id,
+                                      Jobs.user == current_user).first()
+    if jobs:
+        session.delete(jobs)
+        session.commit()
+    else:
+        abort(404)
+    return redirect('/')
 
 
 if __name__ == '__main__':
