@@ -11,7 +11,7 @@
 </head>
 <body>
     {% if current_user.is_authenticated %}
-        <a class="navbar-brand" href="/logout">{{ current_user.name }}</a>
+        <a class="navbar-brand" href="/logout">{{ current_user.name }} {{ current_user.surname }}</a>
     {% else %}
         <p>
             <a class="btn btn-primary " href="/register">Зарегистрироваться</a>
