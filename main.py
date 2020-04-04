@@ -41,7 +41,7 @@ class LoginForm(FlaskForm):
 
 
 class JobsForm(FlaskForm):
-    team_leader = StringField('Team leader', validators=[DataRequired()])
+
     job = TextAreaField("Job", validators=[DataRequired()])
     work_size = StringField("Work size", validators=[DataRequired()])
     collaborators = StringField("Collaborators", validators=[DataRequired()])
@@ -129,7 +129,7 @@ def add_jobs():
         session = db_session.create_session()
 
         jobs = Jobs()
-        jobs.team_leader = form.team_leader.data
+        jobs.team_leader = current_user.id
         jobs.job = form.job.data
         jobs.work_size = form.work_size.data
         jobs.collaborators = form.collaborators.data
@@ -151,7 +151,6 @@ def edit_jobs(id):
         session = db_session.create_session()
         jobs = session.query(Jobs).filter(Jobs.id == id).first()
         if jobs:
-            form.team_leader.data = jobs.team_leader
             form.job.data = jobs.job
             form.work_size.data = jobs.work_size
             form.collaborators.data = jobs.collaborators
@@ -162,7 +161,6 @@ def edit_jobs(id):
         session = db_session.create_session()
         jobs = session.query(Jobs).filter(Jobs.id == id).first()
         if jobs:
-            jobs.team_leader = form.team_leader.data
             jobs.job = form.job.data
             jobs.work_size = form.work_size.data
             jobs.collaborators = form.collaborators.data

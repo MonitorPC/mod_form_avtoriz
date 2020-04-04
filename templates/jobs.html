@@ -6,16 +6,6 @@
     {{ form.hidden_tag() }}
     {{ form.csrf_token }}
     <p>
-        {{ form.team_leader.label }}<br>
-        {{ form.team_leader(class="form-control") }}<br>
-        {% for error in form.team_leader.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
-
-    <p>
         {{ form.job.label }}<br>
         {{ form.job(class="form-control") }}<br>
         {% for error in form.job.errors %}
