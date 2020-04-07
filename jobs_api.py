@@ -37,13 +37,16 @@ def get_one_jobs(jobs_id):
 
 @blueprint.route('/api/jobs', methods=['POST'])
 def create_jobs():
+    session = db_session.create_session()
     if not request.json:
         return jsonify({'error': 'Empty request'})
     elif not all(key in request.json for key in
-                 ['team_leader', 'job', 'work_size', 'collaborators', 'is_finished']):
+                 ['id', 'team_leader', 'job', 'work_size', 'collaborators', 'is_finished']):
         return jsonify({'error': 'Bad request'})
-    session = db_session.create_session()
+    elif session.query(Jobs).filter(Jobs.id == request.json['id']):
+        return jsonify({'error': 'Id already exists'})
     jobs = Jobs(
+        id=request.json['id'],
         team_leader=request.json['team_leader'],
         job=request.json['job'],
         work_size=request.json['work_size'],
