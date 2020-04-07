@@ -1,8 +1,8 @@
 from requests import get, post, delete
 
-print(get('http://localhost:5000/api/jobs'))
-print(delete('http://localhost:5000/api/jobs/1'))
-print(get('http://localhost:5000/api/jobs'))
+print(get('http://localhost:5000/api/jobs').json())
+print(delete('http://localhost:5000/api/jobs/1').json())
+print(get('http://localhost:5000/api/jobs').json())
 
-print(delete('http://localhost:5000/api/jobs/re'))
-print(delete('http://localhost:5000/api/jobs/20'))
+print(delete('http://localhost:5000/api/jobs/re').json())
+print(delete('http://localhost:5000/api/jobs/20').json())
