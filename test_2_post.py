@@ -2,7 +2,7 @@ from requests import post
 
 print(post('http://localhost:5000/api/jobs').json())
 print(post('http://localhost:5000/api/jobs',
-           json={'title': 'Заголовок'}).json())
+           json={'team_leader': 1}).json())
 print(post('http://localhost:5000/api/jobs', json={
     'id': 1,
     'team_leader': 3,
