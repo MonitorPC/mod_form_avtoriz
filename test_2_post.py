@@ -1,7 +1,7 @@
 from requests import post
 
-print(post('http://localhost:5000/api/news').json())
-print(post('http://localhost:5000/api/news',
+print(post('http://localhost:5000/api/jobs').json())
+print(post('http://localhost:5000/api/jobs',
            json={'title': 'Заголовок'}).json())
 print(post('http://localhost:5000/api/jobs', json={
     'id': 1,
