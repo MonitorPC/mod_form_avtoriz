@@ -1,6 +1,6 @@
 from os import abort
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify, make_response
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 
 from flask_wtf import FlaskForm
@@ -9,6 +9,7 @@ from wtforms import PasswordField, StringField, TextAreaField, SubmitField, Bool
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 
+import jobs_api
 from data import db_session
 from data.jobs import Jobs
 from data.users import User
@@ -41,7 +42,6 @@ class LoginForm(FlaskForm):
 
 
 class JobsForm(FlaskForm):
-
     job = TextAreaField("Job", validators=[DataRequired()])
     work_size = StringField("Work size", validators=[DataRequired()])
     collaborators = StringField("Collaborators", validators=[DataRequired()])
@@ -52,9 +52,15 @@ class JobsForm(FlaskForm):
 def main():
     db_session.global_init("db/Mars.sqlite")
     session = db_session.create_session()
+    app.register_blueprint(jobs_api.blueprint)
     j = Jobs()
     u = User()
     app.run()
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
 
 
 @app.route('/')
